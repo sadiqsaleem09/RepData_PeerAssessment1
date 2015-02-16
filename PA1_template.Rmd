@@ -8,18 +8,106 @@ output:
 
 ## Loading and preprocessing the data
 
+```{r echo=TRUE}
+data<-read.csv("C:/Users/sadiq.rehmani/Desktop/Coursera/activity.csv", stringsAsFactor = FALSE)
+str(data)
+```
+
+As you would notice the date variable is character. We would transform it into a date type
+
+```{r echo=TRUE}
+data$date<-as.Date(data$date, format="%Y-%m-%d")
+```
 
 
 ## What is mean total number of steps taken per day?
 
+1. Calculate the total number of steps taken per day
+
+```{r echo=TRUE}
+
+library(dplyr)
+data%>%
+  group_by(date)%>%
+  summarise(Total_Steps=sum(steps,na.rm=TRUE))
+```
+
+2. Histogram of the total number of steps taken each day
+
+```{r echo=TRUE}
+library(ggplot2)
+data%>%
+  group_by(date)%>%
+  summarise(Total_Steps=sum(steps,na.rm=TRUE))%>%
+  ggplot(aes(Total_Steps)) + geom_histogram(binwidth=1000) + xlim(1000,18000) + 
+  ggtitle("Total Number of Steps per day")
+```
+
+3. Mean and Median of the total number of steps taken per day
+
+```{r echo=TRUE}
+stepdata<-data%>%
+  group_by(date)%>%
+  summarise(Total_Steps=sum(steps,na.rm=TRUE))
+```  
+Mean Total Number of steps
+```{r echo=TRUE}
+mean(stepdata$Total_Steps)
+```
+
+Median Total Number of Steps
+```{r echo=TRUE}
+median(stepdata$Total_Steps)
+```
 
 
 ## What is the average daily activity pattern?
 
+1. Time series plot of the 5-minute interval (x-axis) and the average number of steps taken
 
+```{r echo=TRUE}
+timeseries<-data%>%
+  group_by(interval)%>%
+  summarise(Average=(sum(steps, na.rm=TRUE)/61)) #61 is the total number of days between Oct and November
+
+plot(x=timeseries$interval, y=timeseries$Average, type="l", xlab="Interval", ylab="Average number of steps")
+```
+
+2. The 5-minute interval that contains the maximum number of steps on average across all the days in the dataset, 
+
+```{r echo=TRUE}
+timeseries<-data%>%
+  group_by(interval)%>%
+  summarise(Average=(sum(steps, na.rm=TRUE)/61))%>%
+  arrange(desc(Average))
+
+timeseries[1,1]
+```
 
 ## Imputing missing values
 
+1. Total number of missing values in the dataset
+```{r echo=TRUE}
+length(which(is.na(data)))
+```
 
+2. New dataset with missing values filled with mean for that time interval
+
+```{r echo=TRUE}
+data%>%
+  group_by(interval)%>%
+  mutate(steps=ifelse(is.na(steps), mean(steps, na.rm=TRUE), steps))
+#%>%
+ # ggplot(aes(Total_Steps)) + geom_histogram(binwidth=1000) + xlim(1000,18000) + 
+  #ggtitle("Total Number of Steps per day")
+
+newdata<-data%>%
+  group_by(interval)%>%
+  mutate(steps=ifelse(is.na(steps), mean(steps, na.rm=TRUE), steps))%>%
+  summarise(Total_Steps=sum(steps,na.rm=TRUE))%>%
+
+#mean(newdata$Total_Steps, na.rm=TRUE)
+#median(newdata$Total_Steps, na.rm=TRUE)
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
