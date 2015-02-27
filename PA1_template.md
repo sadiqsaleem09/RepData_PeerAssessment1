@@ -5,7 +5,7 @@
 
 
 ```r
-data<-read.csv("C:/Users/sadiq.rehmani/Desktop/Coursera/activity.csv", stringsAsFactor = FALSE)
+data<-read.csv("~/Documents/activity.csv", stringsAsFactor = FALSE)
 str(data)
 ```
 
@@ -192,3 +192,16 @@ median(newstepdata$total)
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+```r
+newdata$day<-ifelse(weekdays(newdata$date) %in% c("Saturday","Sunday"), "weekend", "weekday")
+
+library(ggplot2)
+newdata%>%
+  group_by(interval,day)%>%
+  summarise(avg_steps=mean(steps))%>%
+  ggplot(aes(x=interval, y=avg_steps)) + geom_line()+facet_grid(day~.) + xlab("Interval")+ylab("Average Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
