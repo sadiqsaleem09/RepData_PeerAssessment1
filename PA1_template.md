@@ -193,10 +193,33 @@ median(newstepdata$total)
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+1. Creating a new variable "day" to identify if a particular date was a weekday or weekend
+
 
 ```r
 newdata$day<-ifelse(weekdays(newdata$date) %in% c("Saturday","Sunday"), "weekend", "weekday")
 
+head(newdata)
+```
+
+```
+## Source: local data frame [6 x 4]
+## Groups: interval
+## 
+##       steps       date interval     day
+## 1 1.7169811 2012-10-01        0 weekday
+## 2 0.3396226 2012-10-01        5 weekday
+## 3 0.1320755 2012-10-01       10 weekday
+## 4 0.1509434 2012-10-01       15 weekday
+## 5 0.0754717 2012-10-01       20 weekday
+## 6 2.0943396 2012-10-01       25 weekday
+```
+
+
+2. Compare the average number of steps taken during averaged across weekdays vs. averaged across all weekend days using the panel plot
+
+
+```r
 library(ggplot2)
 newdata%>%
   group_by(interval,day)%>%
@@ -204,4 +227,4 @@ newdata%>%
   ggplot(aes(x=interval, y=avg_steps)) + geom_line()+facet_grid(day~.) + xlab("Interval")+ylab("Average Steps")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-13-1.png) 

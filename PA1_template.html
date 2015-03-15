@@ -174,9 +174,26 @@ ggplot(data=newstepdata, aes(total))+geom_histogram(binwidth=1000)+ xlim(1000,18
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>
+<ol style="list-style-type: decimal">
+<li>Creating a new variable “day” to identify if a particular date was a weekday or weekend</li>
+</ol>
 <pre class="r"><code>newdata$day&lt;-ifelse(weekdays(newdata$date) %in% c(&quot;Saturday&quot;,&quot;Sunday&quot;), &quot;weekend&quot;, &quot;weekday&quot;)
 
-library(ggplot2)
+head(newdata)</code></pre>
+<pre><code>## Source: local data frame [6 x 4]
+## Groups: interval
+## 
+##       steps       date interval     day
+## 1 1.7169811 2012-10-01        0 weekday
+## 2 0.3396226 2012-10-01        5 weekday
+## 3 0.1320755 2012-10-01       10 weekday
+## 4 0.1509434 2012-10-01       15 weekday
+## 5 0.0754717 2012-10-01       20 weekday
+## 6 2.0943396 2012-10-01       25 weekday</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Compare the average number of steps taken during averaged across weekdays vs. averaged across all weekend days using the panel plot</li>
+</ol>
+<pre class="r"><code>library(ggplot2)
 newdata%&gt;%
   group_by(interval,day)%&gt;%
   summarise(avg_steps=mean(steps))%&gt;%
